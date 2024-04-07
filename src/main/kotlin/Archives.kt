@@ -1,8 +1,8 @@
-class Archive(titel: String) {
-    val titel = titel
-    var noteList = mutableListOf<Notes>()
+class Archive(val titel: String) {
+
+    val noteList = mutableListOf<Notes>()
     fun addMoreNote(titel: String, text: String) {
-        var note: Notes = Notes(titel, text)
+        val note = Notes(titel, text)
         noteList.add(note)
     }
 
@@ -14,13 +14,5 @@ class Archive(titel: String) {
         } else {
             println("заметок не найдено")
         }
-    }
-
-    fun writeMore(noteIndex: Int, text: String) {
-        noteList[noteIndex].text = noteList[noteIndex].text + text
-    }
-
-    fun readOneNote(noteIndex: Int): String {
-        return noteList[noteIndex].readNote()
     }
 }
