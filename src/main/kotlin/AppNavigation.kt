@@ -3,90 +3,96 @@ import java.util.Scanner
 class AppNavigation() {
 
     fun appNavi(
-        inputControlVar: AppInput,
-        menuVar: Menu,
         scannerVar: Scanner,
         archiveListVar: MutableList<Archive>
     ) {
         var archiveList = archiveListVar
         var scanner: Scanner = scannerVar
-        var menu = menuVar
-        var inputControl = inputControlVar
         var mark: Boolean = true
         var mark2: Boolean = true
         var mark3: Boolean = true
 
+        val archiveListOutput: (MutableList<Archive>) -> Unit = {
+            if (it.isNotEmpty()) {
+                for ((index, archive) in it.withIndex()) {
+                    println("${index + 1} ${archive.titel}")
+                }
+            } else {
+                println("Список пуст. Созданных архивов нет.")
+            }
+        }
+
         while (mark) {
-            menu.mainScreeenMenu()
-            var choise = inputControl.integerInput(scanner)
+            Menu.mainScreeenMenu()
+            var choise = AppInput.integerInput(scanner, Menu.mainMenuList.size)
             when (choise) {
                 1 -> {
                     mark2 = true
-                    println("Введите название архива.")
-                    scanner = Scanner(System.`in`)
-                    var name = inputControl.stringInput(scanner)
+                    Menu.need_titel_Messega_for_user()
+                    //     scanner = Scanner(System.`in`)
+                    var name = AppInput.stringInput(scanner)
                     archiveList.add(Archive(name))
-                    println("Архив создан.")
+                    Menu.archiveIsReady_infoMessege(name)
                 }
 
                 2 -> {
                     mark2 = true
-                    println("Список созданных архивов:")
-                    for ((index, archive) in archiveList.withIndex()) {
-                        println("${index + 1} ${archive.titel}")
+                    Menu.stringBeforArchiveList(archiveList.isNotEmpty())
+                    archiveListOutput(archiveList)
+                    println("\n")
+                    Menu.allArchiveMenu(archiveList.isNotEmpty())
+                    if (archiveList.isEmpty()) {
+                        while (choise != 5_555_555_55) {
+                            choise = AppInput.integerInput(scanner, 0)
+                        }
+                    } else {
+                        choise = AppInput.integerInput(scanner, Menu.inArchiveListMap.size)
                     }
-                    //  menu.allArchiveMenu()
-                    println("Введите номер архива, который надо открыть :")
-                    scanner = Scanner(System.`in`)
-                    choise = inputControl.integerInput(scanner)
-
                     if (archiveList.size >= choise) {
-                        println("Архив ${archiveList[choise - 1].titel} открыт")
-                        //..............................
+                        Menu.stringNoteOpen(archiveList[choise - 1].titel)
                         while (mark2) {
-                            menu.newArchiveMenu()
-                            println("Введите номер действия:")
-                            scanner = Scanner(System.`in`)
-                            var choiseForNote = inputControl.integerInput(scanner)
+                            Menu.newArchiveMenu()
+                            Menu.inputActionNumber()
+                            var choiseForNote =
+                                AppInput.integerInput(scanner, Menu.archiveMenuMap.size)
                             when (choiseForNote) {
                                 1 -> {
-                                    mark3 = true
-                                    println("Введите название.")
-                                    scanner.nextLine()
-                                    var name = inputControl.stringInput(scanner)
-                                    println("Введите текст заметки")
-                                    scanner = Scanner(System.`in`)
-                                    var str = inputControl.stringInput(scanner)
+                                    Menu.inputNoteTitel()
+                                    var name = AppInput.stringInput(scanner)
+                                    Menu.inputNoteText()
+                                    var str = AppInput.stringInput(scanner)
                                     archiveList[choise - 1].addMoreNote(name, str)
                                     println(archiveList[choise - 1].noteList.size)
                                 }
 
                                 2 -> {
                                     mark3 = true
-                                    println("Список заметок архива ${archiveList[choise - 1].titel}")
+                                    Menu.noteListInputForArchive(archiveList[choise - 1].titel)
                                     if (archiveList[choise - 1].noteList.size > 0) {
                                         archiveList[choise - 1].readNoteList()
-                                        println("Введите номер заметки для её просмотра")
-                                        scanner = Scanner(System.`in`)
-                                        var noteChoise = inputControl.integerInput(scanner)
+                                        Menu.writeNoteNumForLook(archiveList[choise - 1].noteList.isNotEmpty())
+                                        var noteChoise = AppInput.integerInput(
+                                            scanner,
+                                            archiveList[choise - 1].noteList.size
+                                        )
                                         if (archiveList[choise - 1].noteList.size >= noteChoise) {
-                                            println("Заметка: ${archiveList[choise - 1].noteList[noteChoise - 1].titel}")
+                                            Menu.noteName(archiveList[choise - 1].noteList[noteChoise - 1].titel)
                                             while (mark3) {
-                                                menu.noteMenu()
-                                                println("введите нужный номер")
-                                                scanner = Scanner(System.`in`)
-                                                var noteChangeNum =
-                                                    inputControl.integerInput(scanner)
+                                                Menu.noteMenu()
+                                                Menu.inputActionNumber()
+                                                var noteChangeNum = AppInput.integerInput(
+                                                    scanner,
+                                                    Menu.noteMenuMap.size
+                                                )
                                                 when (noteChangeNum) {
                                                     1 -> {
-                                                        println("Заметка: ${archiveList[choise - 1].noteList[noteChoise - 1].text}")
+                                                        Menu.noteName(archiveList[choise - 1].noteList[noteChoise - 1].text)
                                                     }
 
                                                     2 -> {
-                                                        println("Введите дополнительный текст")
-                                                        scanner = Scanner(System.`in`)
+                                                        Menu.strinAdditioanalInput()
                                                         var strForNote =
-                                                            inputControl.stringInput(scanner)
+                                                            AppInput.stringInput(scanner)
                                                         archiveList[choise - 1].noteList[noteChoise - 1].continueNote(
                                                             strForNote
                                                         )
@@ -95,31 +101,37 @@ class AppNavigation() {
                                                     3 -> {
                                                         mark3 = false
                                                     }
+
+                                                    5_555_555_55 -> {
+                                                        mark3 = false
+                                                    }
                                                 }
                                             }
                                         }
                                     } else {
-                                        println("В даннос архиве пока-что заметок нет.")
+                                        Menu.stringNoteNotHere()
                                     }
                                 }
 
                                 3 -> {
                                     mark2 = false
                                 }
-
                             }
                         }
+                    } else if (choise == 5_555_555_55) {
+                        Menu.exitFromWhere()
                     } else {
-                        println("Данного архива не существует..")
+                        Menu.stringArchiveNotExist()
                     }
-
                 }
 
-                3 -> return
+                3 -> {
+                    Menu.exitFromWhere()
+                    return
+                }
             }
         }
     }
-
 }
 
 
