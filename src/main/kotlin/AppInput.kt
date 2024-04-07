@@ -17,7 +17,7 @@ object AppInput {
     }
 
     fun integerInput(scanner: Scanner, menuSize: Int): Int {
-        var innerIntValue: Int = 5_555_555_55
+        val innerIntValue: Int = 5_555_555_55
         val exit = "выход"
         var mark = true
         while (mark) {
